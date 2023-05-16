@@ -71,7 +71,7 @@ const App = () => {
   const {headerShown} = global
   const Navigation = getNavigation(modules, screens, initialRoute, headerShown)
   const store = getStore(global)
-
+console.log(global)
   let effects = {}
   hooks.map(hook => {
     effects[hook.name] = hook.value()
