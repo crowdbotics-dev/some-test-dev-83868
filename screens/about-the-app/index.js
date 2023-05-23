@@ -1,50 +1,228 @@
-import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, View, SafeAreaView, Image } from "react-native";
+import React from "react";
+import { useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+const petData = [{
+  id: 1,
+  name: "Buddy",
+  image: "https://drive.google.com/uc?export=view&id=139XGK7ODE8e_MdcY6bHiBJes8xOqlV-L",
+  isFav: false
+}, {
+  id: 2,
+  name: "Max",
+  image: "https://drive.google.com/uc?export=view&id=1lr1eFggIYYMbaXCOKVFI-Z-Zn8Z7Fnhi",
+  isFav: true
+}, {
+  id: 3,
+  name: "Charlie",
+  image: "https://drive.google.com/uc?export=view&id=1H6aB3CncDrYuLwPx0DBlNp0saLLRrNcp",
+  isFav: false
+}, {
+  id: 4,
+  name: "Lucy",
+  image: "https://drive.google.com/uc?export=view&id=1xY7Hgd-mvrWujQnw6QOzGxoVJBbDQnU5",
+  isFav: true
+}, {
+  id: 5,
+  name: "Daisy",
+  image: "https://drive.google.com/uc?export=view&id=139XGK7ODE8e_MdcY6bHiBJes8xOqlV-L",
+  isFav: false
+}, {
+  id: 6,
+  name: "Rocky",
+  image: "https://drive.google.com/uc?export=view&id=1xY7Hgd-mvrWujQnw6QOzGxoVJBbDQnU5",
+  isFav: false
+}, {
+  id: 7,
+  name: "Luna",
+  image: "https://drive.google.com/uc?export=view&id=1lr1eFggIYYMbaXCOKVFI-Z-Zn8Z7Fnhi",
+  isFav: true
+}, {
+  id: 8,
+  name: "Bailey",
+  image: "https://drive.google.com/uc?export=view&id=1H6aB3CncDrYuLwPx0DBlNp0saLLRrNcp",
+  isFav: false
+}, {
+  id: 9,
+  name: "Sadie",
+  image: "https://drive.google.com/uc?export=view&id=1xY7Hgd-mvrWujQnw6QOzGxoVJBbDQnU5",
+  isFav: false
+}, {
+  id: 10,
+  name: "Molly",
+  image: "https://drive.google.com/uc?export=view&id=1H6aB3CncDrYuLwPx0DBlNp0saLLRrNcp",
+  isFav: true
+}];
 
-const AboutTheAppScreen = params => {
-  const [ImageSource, setImageSource] = useState();
-  const [text1, setText1] = useState("");
-  const [text2, setText2] = useState("");
-  useEffect(() => {
-    setText1("I understand that uses my dolor sit amet, consectetur adipiscing elit. Viverra auctor laoreet sodales congue sit volutpat quisque. Mattis nisl in convallis sed et. Est turpis aliquam est, ut mattis nisi, amet feugiat. Aliquet odio consequat, nisl mauris ullamcorper malesuada velit sem dolor. Dui morbi porttitor integer felis, pellentesque quam. Et accumsan justo, massa tincidunt arcu fermentum est. Sed nibh id vel, diam ut feugiat nec, placerat mauris. Neque lorem netus lacinia elit est libero sed. Commodo viverra et, neque augue augue mauris, nunc ut nec.");
-    setText2("I understand that uses my dolor sit amet, consectetur adipiscing elit. Viverra auctor laoreet sodales congue sit volutpat quisque. Mattis nisl in convallis sed et. Est turpis aliquam est, ut mattis nisi, amet feugiat. Aliquet odio consequat, nisl mauris ullamcorper malesuada velit sem dolor. Dui morbi porttitor integer felis, pellentesque quam. Et accumsan justo, massa tincidunt arcu fermentum est. Sed nibh id vel, diam ut feugiat nec, placerat mauris. Neque lorem netus lacinia elit est libero sed. Commodo viverra et, neque augue augue mauris, nunc ut nec.");
-    setImageSource(require("./assets/Frame21.png"));
-  }, []);
-  return <SafeAreaView style={styles.container}>
-      <View style={styles.imgScroller}>
-        <Image source={ImageSource} />
-        <Image style={styles.threeDots} source={require("./assets/3Dots.png")} />
+const PetGalleryScreen = () => {
+  const [filter, setFilter] = useState("Explore");
+  const [pets, setPets] = useState(petData);
+
+  const handleFilter = filterType => {
+    setFilter(filterType);
+
+    if (filterType === "Explore") {
+      setPets(petData);
+    } else if (filterType === "My Pets") {
+      setPets(petData.filter(pet => !pet.isFav));
+    } else if (filterType === "My Favs") {
+      setPets(petData.filter(pet => pet.isFav));
+    }
+  };
+
+  const handleFavToggle = id => {
+    const updatedPets = pets.map(pet => {
+      if (pet.id === id) {
+        return { ...pet,
+          isFav: !pet.isFav
+        };
+      }
+
+      return pet;
+    });
+    setPets(updatedPets);
+  };
+
+  return <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Explore</Text>
+        <TouchableOpacity onPress={() => console.log("Add Pet button pressed")}>
+          <Image source={require("./add.png")} style={styles.headerImage} />
+        </TouchableOpacity>
       </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>{text1}</Text>
-        <Text style={styles.text}>{text2}</Text>
+      <View style={styles.body}>
+        <ScrollView contentContainerStyle={styles.cardContainer}>
+          {pets.map(pet => <TouchableOpacity key={pet.id} style={styles.card} onPress={() => console.log(`Navigate to ${pet.name}'s Pet Details screen`)}>
+              <Image source={{
+            uri: pet.image
+          }} style={styles.cardImage} />
+              <View style={styles.cardTextContainer}>
+                <Text style={styles.cardName}>{pet.name}</Text>
+                <TouchableOpacity onPress={() => handleFavToggle(pet.id)}>
+                  <Image source={{
+                uri: pet.isFav ? "https://drive.google.com/uc?export=view&id=1tVMtgpqVRu-qrFqEN2u04o_gOPG0vFDQ" : "https://drive.google.com/uc?export=view&id=1pIgKHT8aLxInLdY_XuLrq8P-vzkFizkX"
+              }} style={styles.cardFavImage} />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>)}
+        </ScrollView>
       </View>
-    </SafeAreaView>;
+      <View style={styles.footer}>
+        <TouchableOpacity style={[styles.footerButton, filter === "Explore" && styles.footerButtonHighlighted]} onPress={() => handleFilter("Explore")}>
+          <Image source={require("./1200px-Magnifying_glass_icon.svg.png")} style={styles.footerButtonImage} />
+          <Text style={[styles.footerButtonText, {
+          color: filter === "Explore" ? "#FFFFFF" : "#376D89"
+        }]}>
+            Explore
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.footerButton, filter === "My Pets" && styles.footerButtonHighlighted]} onPress={() => handleFilter("My Pets")}>
+          <Image source={require("./peticon.png")} style={styles.footerButtonImage} />
+          <Text style={[styles.footerButtonText, {
+          color: filter === "My Pets" ? "#FFFFFF" : "#376D89"
+        }]}>
+            My Pets
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.footerButton, filter === "My Favs" && styles.footerButtonHighlighted]} onPress={() => handleFilter("My Favs")}>
+          <Image source={{
+          uri: "https://drive.google.com/uc?export=view&id=1pIgKHT8aLxInLdY_XuLrq8P-vzkFizkX"
+        }} style={styles.footerButtonImage} />
+          <Text style={[styles.footerButtonText, {
+          color: filter === "My Favs" ? "#FFFFFF" : "#376D89"
+        }]}>
+            My Favs
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>;
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    backgroundColor: "#fff"
+    backgroundColor: "#EFF5F7"
   },
-  imgScroller: {
-    flexDirection: "column",
-    justifyContent: "space-between",
+  header: {
+    backgroundColor: "#DFEDF4",
+    flexDirection: "row",
     alignItems: "center",
-    marginVertical: 20
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10
   },
-  threeDots: {
-    marginTop: 20
+  headerTitle: {
+    color: "#376D89",
+    fontSize: 24,
+    fontWeight: "bold"
   },
-  textContainer: {
-    paddingHorizontal: 20
+  headerImage: {
+    width: 30,
+    height: 30
   },
-  text: {
+  body: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 10
+  },
+  cardContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between"
+  },
+  card: {
+    width: "48%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    marginBottom: 20
+  },
+  cardImage: {
+    width: "100%",
+    height: 150,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10
+  },
+  cardTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    paddingVertical: 5
+  },
+  cardName: {
+    color: "#376D89",
+    fontSize: 18,
+    fontWeight: "bold"
+  },
+  cardFavImage: {
+    width: 34,
+    height: 31
+  },
+  footer: {
+    backgroundColor: "#DFEDF4",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 10
+  },
+  footerButton: {
+    flexDirection: "column",
+    alignItems: "center"
+  },
+  footerButtonHighlighted: {
+    backgroundColor: "#376D89",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5
+  },
+  footerButtonImage: {
+    width: 34,
+    height: 31
+  },
+  footerButtonText: {
+    color: "#376D89",
     fontSize: 14,
-    textAlign: "justify",
-    lineHeight: 18,
-    marginVertical: 10
+    fontWeight: "bold",
+    marginTop: 5
   }
 });
-export default AboutTheAppScreen;
+export default PetGalleryScreen;
