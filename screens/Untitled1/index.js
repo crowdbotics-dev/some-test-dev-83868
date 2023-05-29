@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   VBAdGqfc: {
     width: 107,
-    height: 62
+    height: 455
   }
 });
 export default Untitled1;
